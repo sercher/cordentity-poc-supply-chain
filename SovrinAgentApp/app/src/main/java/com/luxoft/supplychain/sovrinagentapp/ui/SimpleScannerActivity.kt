@@ -91,9 +91,9 @@ class SimpleScannerActivity : AppCompatActivity(), ZBarScannerView.ResultHandler
         super.onResume()
         mScannerView?.setResultHandler(this)
         mScannerView?.startCamera()
+//        var content: String = ""
 //        handleResult(Result().apply {
-//            contents =
-//                    ""
+//            contents = content
 //        })
     }
 
@@ -122,7 +122,7 @@ class SimpleScannerActivity : AppCompatActivity(), ZBarScannerView.ResultHandler
                         agentConnection.acceptInvite(content.invite).toBlocking().value().apply {
                             do {
                                 val credOffer = try {
-                                    receiveCredentialOffer().timeout(5, TimeUnit.SECONDS).toBlocking().value()
+                                    receiveCredentialOffer().timeout(60, TimeUnit.SECONDS).toBlocking().value()
                                 } catch (e: RuntimeException) {
                                     //End of waiting for new credentials
                                     if (e.cause !is TimeoutException)
@@ -131,7 +131,7 @@ class SimpleScannerActivity : AppCompatActivity(), ZBarScannerView.ResultHandler
                                 }?.apply {
                                     val credentialRequest = indyUser.createCredentialRequest(indyUser.walletUser.getIdentityDetails().did, this)
                                     sendCredentialRequest(credentialRequest)
-                                    val credential = receiveCredential().toBlocking().value()
+                                    val credential = receiveCredential().timeout(60, TimeUnit.SECONDS).toBlocking().value()
                                     indyUser.checkLedgerAndReceiveCredential(credential, credentialRequest, this)
                                 }
                             } while (credOffer != null)
@@ -150,7 +150,7 @@ class SimpleScannerActivity : AppCompatActivity(), ZBarScannerView.ResultHandler
                     try {
                         agentConnection.acceptInvite(content.invite).toBlocking().value().apply {
                             api.createRequest(AskForPackageRequest(indyUser.walletUser.getIdentityDetails().did, content.clientUUID!!)).toBlocking().first()
-                            val proofRequest = receiveProofRequest().toBlocking().value()
+                            val proofRequest = receiveProofRequest().timeout(60, TimeUnit.SECONDS).toBlocking().value()
 
                             ContextCompat.startActivity(
                                     this@SimpleScannerActivity,

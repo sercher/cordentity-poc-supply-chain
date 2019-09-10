@@ -33,7 +33,6 @@ import com.luxoft.blockchainlab.hyperledger.indy.utils.SerializationUtils
 import com.luxoft.supplychain.sovrinagentapp.R
 import com.luxoft.supplychain.sovrinagentapp.communcations.SovrinAgentService
 import com.luxoft.supplychain.sovrinagentapp.data.ClaimAttribute
-import com.luxoft.supplychain.sovrinagentapp.di.tailsPath
 import com.luxoft.supplychain.sovrinagentapp.ui.MainActivity.Companion.showAlertDialog
 import com.luxoft.supplychain.sovrinagentapp.ui.model.ClaimsAdapter
 import io.realm.Realm
@@ -41,6 +40,7 @@ import org.koin.android.ext.android.inject
 import rx.Completable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 
 class AskClaimsActivity : AppCompatActivity() {
@@ -85,12 +85,12 @@ class AskClaimsActivity : AppCompatActivity() {
                 // TODO: if agree you should send new credential request and listen to new credential
                 // TODO: only when credential is sent Corda-side should commit transaction
 
-                val credentialOffer = connection.receiveCredentialOffer().toBlocking().value()
+                val credentialOffer = connection.receiveCredentialOffer().timeout(60, TimeUnit.SECONDS).toBlocking().value()
 
                 val credentialRequest = indyUser.createCredentialRequest(indyUser.walletUser.getIdentityDetails().did, credentialOffer)
                 connection.sendCredentialRequest(credentialRequest)
 
-                val credential = connection.receiveCredential().toBlocking().value()
+                val credential = connection.receiveCredential().timeout(60, TimeUnit.SECONDS).toBlocking().value()
                 val revocationRegistryDefinition : RevocationRegistryDefinition? =
                     indyUser.getRevocationRegistryDefinition(
                         CredentialDefinitionId.fromString(
