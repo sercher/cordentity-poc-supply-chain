@@ -1,8 +1,8 @@
 package com.luxoft.supplychain.sovrinagentapp.application
 
-const val BASE_URL = "http://18.216.169.252:8082"
+const val BASE_URL = "http://3.17.155.208:8082"
 
-const val WS_ENDPOINT = "ws://18.216.169.252:8094/ws"
+const val WS_ENDPOINT = "ws://3.17.65.252:8094/ws"
 const val WS_LOGIN = "medical-supplychain"
 const val WS_PASS = "secretPassword"
 
