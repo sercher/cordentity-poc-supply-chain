@@ -29,6 +29,15 @@ services:
       - "PORT=8096"
     container_name: agent96
 
+  agent97:
+    image: teamblockchain/indy-agent-python:eee0475e1ac3417990a4ec55164b1a32eb3bd6d5
+    #    network_mode: host
+    ports:
+      - "8097:8097"
+    environment:
+      - "PORT=8097"
+    container_name: agent97
+
   agentInitiator:
     image: alpine:3.6
     network_mode: host
@@ -37,4 +46,5 @@ services:
       - agent94
       - agent95
       - agent96
-    command: sh -c 'sleep 10; /usr/bin/wget --spider http://localhost:8094/; /usr/bin/wget --spider http://localhost:8095/; /usr/bin/wget --spider http://localhost:8096/'
+      - agent97
+    command: sh -c 'sleep 10; /usr/bin/wget --spider http://localhost:8094/; /usr/bin/wget --spider http://localhost:8095/; /usr/bin/wget --spider http://localhost:8096/; /usr/bin/wget --spider http://localhost:8097/'
